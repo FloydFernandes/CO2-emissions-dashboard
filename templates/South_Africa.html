@@ -1,0 +1,634 @@
+  
+{% extends 'base.html' %}
+{% block body %}
+
+
+
+
+
+<div class="container my-3">
+    <!-- <div class="row"> -->
+        <h3 style="text-align: center;">{{country}}</h3>
+        <div class="row">
+            <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container1" , style="height: 400px;"></div>
+            </div>
+        
+            <div class="col-sm-6 col-md-6 mb-5">
+                <div id="container2" , style="height: 400px;"></div>
+            </div>
+        </div>
+
+
+        <select id="selectBox" class="form-select" aria-label="Default select example" onchange="changeFunc();">
+            <option selected>How many years do you want to forecast?</option>
+            <option value="5">5 years</option>
+            <option value="10">10 years</option>
+            <option value="20">20 years</option>
+            <option value="40">40 years</option>
+            <option value="50">50 years</option>
+          </select>
+
+        <div>
+          <div class="row">
+            <div id="container3" , style="height: 400px; display: none;"></div>
+        </div>
+        <div class="row">
+            <div id="container4" , style="height: 400px; display: none;"></div>
+        </div>
+        <div class="row">
+            <div id="container5" , style="height: 400px; display: none;"></div>
+        </div>
+        <div class="row">
+            <div id="container6" , style="height: 400px; display: none;"></div>
+        </div>
+        <div class="row">
+            <div id="container7" , style="height: 400px; display: none;"></div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        
+        function changeFunc() {
+            var selectBox = document.getElementById("selectBox");
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+            if (selectedValue == 5 ) {
+                document.getElementById('container3').style.display='block';
+                document.getElementById('container4').style.display='none';
+                document.getElementById('container5').style.display='none';
+                document.getElementById('container6').style.display='none';
+                document.getElementById('container7').style.display='none';
+            } 
+            else if (selectedValue == 10) {
+                document.getElementById('container4').style.display='block';
+                document.getElementById('container3').style.display='none';
+                document.getElementById('container5').style.display='none';
+                document.getElementById('container6').style.display='none';
+                document.getElementById('container7').style.display='none';
+            }
+            else if (selectedValue == 20) {
+                document.getElementById('container5').style.display='block';
+                document.getElementById('container3').style.display='none';
+                document.getElementById('container4').style.display='none';
+                document.getElementById('container6').style.display='none';
+                document.getElementById('container7').style.display='none';
+            }
+            else if (selectedValue == 40) {
+                document.getElementById('container6').style.display='block';
+                document.getElementById('container3').style.display='none';
+                document.getElementById('container4').style.display='none';
+                document.getElementById('container5').style.display='none';
+                document.getElementById('container7').style.display='none';
+            }
+            else if (selectedValue == 50){
+                document.getElementById('container7').style.display='block';
+                document.getElementById('container3').style.display='none';
+                document.getElementById('container4').style.display='none';
+                document.getElementById('container5').style.display='none';
+                document.getElementById('container6').style.display='none';
+            }
+            else {
+                document.getElementById('container3').style.display='none';
+                document.getElementById('container4').style.display='none';
+                document.getElementById('container5').style.display='none';
+                document.getElementById('container6').style.display='none';
+                document.getElementById('container7').style.display='none';
+            }
+        }
+
+    </script>
+
+
+
+        <script type="text/javascript">
+            Highcharts.chart('container1', {
+
+title: {
+    text: 'CO2 Emission data'
+},
+
+subtitle: {
+    text: 'Pollution'
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1] }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Pollution',
+    data: {{ raw_chart_vals }}
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+        </script>
+
+
+        <script type="text/javascript">
+        Highcharts.chart('container2', {
+
+title: {
+    text: 'Forecasting using ARIMA'
+},
+
+subtitle: {
+    text: 'ARIMA {{arima_orders}} [{{arima_seasonal}}] '
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1] }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Data',
+    data: {{ raw_chart_vals }}
+}, {
+    name: 'Forecasted Data',
+    color: "red",
+    data: [
+    {% for x in raw_chart_vals %}
+        null,
+    {% endfor %}
+
+    {% for x in arima_vals %}
+    {% if loop.index < ((arima_vals|length) - 43) %}
+   {{x|round(3)}}, 
+    {% endif %}
+    {% endfor %}
+
+    ]
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+
+    </script>
+
+    <script type="text/javascript">
+        Highcharts.chart('container3', {
+
+title: {
+    text: 'Forecasting using ARIMA'
+},
+
+subtitle: {
+    text: 'ARIMA {{arima_orders}} [{{arima_seasonal}}] '
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1]-40 }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Data',
+    data: {{ raw_chart_vals }}
+}, {
+    name: 'Forecasted Data',
+    color: "red",
+    data: [
+    {% for x in raw_chart_vals %}
+        null,
+    {% endfor %}
+    {% for x in arima_vals %}
+    {% if loop.index < ((arima_vals|length) - 45) %}
+   {{x|round(3)}}, 
+    {% endif %}
+    {% endfor %}
+
+
+    ]
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+
+    </script>
+
+    <script type="text/javascript">
+        Highcharts.chart('container4', {
+
+title: {
+    text: 'Forecasting using ARIMA'
+},
+
+subtitle: {
+    text: 'ARIMA {{arima_orders}} [{{arima_seasonal}}] '
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1] }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Data',
+    data: {{ raw_chart_vals }}
+}, {
+    name: 'Forecasted Data',
+    color: "red",
+    data: [
+    {% for x in raw_chart_vals %}
+        null,
+    {% endfor %}
+
+    {% for x in arima_vals %}
+    {% if loop.index < ((arima_vals|length) - 40) %}
+   {{x|round(3)}}, 
+    {% endif %}
+    {% endfor %}
+
+    ]
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+
+    </script>
+
+    <script type="text/javascript">
+        Highcharts.chart('container5', {
+
+title: {
+    text: 'Forecasting using ARIMA'
+},
+
+subtitle: {
+    text: 'ARIMA {{arima_orders}} [{{arima_seasonal}}] '
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1] }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Data',
+    data: {{ raw_chart_vals }}
+}, {
+    name: 'Forecasted Data',
+    color: "red",
+    data: [
+    {% for x in raw_chart_vals %}
+        null,
+    {% endfor %}
+
+    {% for x in arima_vals %}
+    {% if loop.index < ((arima_vals|length) - 30) %}
+   {{x|round(3)}}, 
+    {% endif %}
+    {% endfor %}
+
+    ]
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+
+    </script>
+
+    <script type="text/javascript">
+        Highcharts.chart('container6', {
+
+title: {
+    text: 'Forecasting using ARIMA'
+},
+
+subtitle: {
+    text: 'ARIMA {{arima_orders}} [{{arima_seasonal}}] '
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1] }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Data',
+    data: {{ raw_chart_vals }}
+}, {
+    name: 'Forecasted Data',
+    color: "red",
+    data: [
+    {% for x in raw_chart_vals %}
+        null,
+    {% endfor %}
+
+    {% for x in arima_vals %}
+    {% if loop.index < ((arima_vals|length) - 10) %}
+   {{x|round(3)}}, 
+    {% endif %}
+    {% endfor %}
+
+    ]
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+
+    </script>
+
+    <script type="text/javascript">
+        Highcharts.chart('container7', {
+
+title: {
+    text: 'Forecasting using ARIMA'
+},
+
+subtitle: {
+    text: 'ARIMA {{arima_orders}} [{{arima_seasonal}}] '
+},
+
+yAxis: {
+    title: {
+        text: 'Pollution'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{ raw_chart_years[0] }} to {{ arima_years[-1] }}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{ raw_chart_years[0] }}
+    }
+},
+
+series: [{
+    name: 'Data',
+    data: {{ raw_chart_vals }}
+}, {
+    name: 'Forecasted Data',
+    color: "red",
+    data: [
+    {% for x in raw_chart_vals %}
+        null,
+    {% endfor %}
+
+    {% for x in arima_vals %}
+
+        {{x|round(3)}},
+
+    {% endfor %}
+
+    ]
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+
+    </script>
+
+
+
+
+{% endblock %}
+

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<title>CO2 Emissions</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<style>
+  html,
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: "Raleway", sans-serif
+  }
+</style>
+
+<body class="w3-light-grey">
+
+  <!-- Top container -->
+  <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+    <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i
+        class="fa fa-bars"></i>  Menu</button>
+    <span class="w3-bar-item w3-right"> <a href="\" style="text-decoration:none; color: whitesmoke;">CO2 Dashboard</a></span>
+  </div>
+
+  <!-- Sidebar/menu -->
+  <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:200px;" id="mySidebar"><br>
+    <div class="w3-container w3-row">
+      <div class="w3-col s4">
+        <a href="\">
+          <img src="/static/icons8-statistics-16.png" class="w3-margin-right" style="width:46px">
+        </a>
+      </div>
+      <div class="w3-col s8 w3-bar">
+        <span><strong>Welcome, User</strong></span><br>
+
+      </div>
+    </div>
+    <hr>
+    <div class="w3-container">
+      <h5>Navigation</h5>
+    </div>
+    <div class="w3-bar-block">
+      <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black"
+        onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+      <a href="/" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-home fa-fw"></i>Home</a>
+      <a href="/About" class="w3-bar-item w3-button w3-padding"><i class="fa fa-info-circle fa-fw"></i>About</a>
+
+      <br><br>
+    </div>
+  </nav>
+
+
+  <!-- Overlay effect when opening sidebar on small screens -->
+  <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer"
+    title="close side menu" id="myOverlay"></div>
+
+  <!-- !PAGE CONTENT! -->
+  <div class="w3-main" style="margin-left:200px;margin-top:43px;">
+
+    <!-- Header -->
+    <header class="w3-container" style="padding-top:22px">
+      <h5><b><i class="fa fa-dashboard"></i> CO2 Emissions Dashboard</b></h5>
+    </header>
+
+    <div class="w3-row-padding w3-margin-bottom">
+      <div class="w3-quarter">
+        <div class="w3-container w3-light-green w3-padding-16">
+          <div class="w3-left"><i class="fa fa-globe w3-xxxlarge"></i></div>
+          <div class="w3-right">
+            <h3>20</h3>
+          </div>
+          <div class="w3-clear"></div>
+          <h4>Countries</h4>
+        </div>
+      </div>
+
+      <div class="w3-quarter">
+        <div class="w3-container w3-blue w3-text-black w3-padding-16">
+          <div class="w3-left"><i class="fa fa-users w3-xxxlarge"></i></div>
+          <div class="w3-right">
+            <h3>6</h3>
+          </div>
+          <div class="w3-clear"></div>
+          <h4>Developers</h4>
+        </div>
+      </div>
+      <div class="w3-half">
+        <div id="loading-alert" class="alert alert-warning" role="alert" style="display: none;">
+          <h4 class="alert-heading">Alert!</h4>
+          <p>Taking you to the future, fasten your seatbelts!</p>
+          <hr>
+          <p class="mb-0">Well, future prediction takes some time, please wait :)</p>
+        </div>
+
+    </div>
+    </div>
+
+
+
+
+
+    <div class="w3-panel">
+      <div class="w3-row-padding" style="margin:0 -16px">
+        <div class="w3-half">
+          <h5>Regions (click country links for future prediction)</h5>
+          <img src="/static/world.svg" style="width:100%" alt="pollution data map">
+          <!-- <svg src="/static/world.svg" style="width: 100%;"> -->
+          </svg>
+        </div>
+        <div id="data-table" class="w3-half w3-row-padding" >
+          <h5 style="display: inline-flex;">Country</h5>
+          <h5 style="display: inline-flex;" class="w3-right">CO2 (In Million tonnes)</h5>
+
+
+          <table class="w3-table w3-striped w3-white"
+            style="overflow-y: scroll; height: 590px; display:inline-block; width: 100%;">
+
+            {% for k, v in pollution.items() %}
+            <tr>
+              <td id="country-unique" style="width: 100%;" onclick="document.getElementById('loader').style.display='block';
+              document.getElementById('loading-alert').style.display='block';
+              document.getElementById('data-table').style.display='none';">
+                <a style="color: black;" href="\{{k}}">{{k}}</a>
+              </td>
+              <td style="width: 100%;" class="w3-right">{{(v / 1000000)|round(3) }}</td>
+            </tr>
+            {% endfor %}
+
+          </table>
+        </div>
+        <div  class="w3-half w3-row-padding d-flex justify-content-center" >
+          <div id="loader" class="spinner-border m-5" role="status" style="width: 2rem; height: 2em; padding: 10% ;display: none; ">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <br>
+    <br>
+    <br>
+    <hr>
+    <div class="w3-container">
+      <h5>Developers</h5>
+      <ul class="w3-ul w3-card-4 w3-white">
+        <li class="w3-padding-16">
+          <a href="https://www.linkedin.com/in/priyanka-sagwekar-aa755a117/" target="_blank">
+            <img src="/static/priyanka.jpeg" class="w3-left w3-circle w3-margin-right" style="width:40px"></a>
+            <span class="w3-xlarge"> <a href="https://www.linkedin.com/in/priyanka-sagwekar-aa755a117/" target="_blank" style="text-decoration: none; color: black;">Priyanka Sagwekar</a></span><br>
+          
+        </li>
+        <li class="w3-padding-16">
+          <a href="https://www.linkedin.com/in/floydffernandes/" target="_blank">
+          <img src="/static/profile.jpg" class="w3-left w3-circle w3-margin-right" style="width:40px"></a>
+          <span class="w3-xlarge"> <a href="https://www.linkedin.com/in/floydffernandes/" target="_blank" style="text-decoration: none; color: black;">Floyd Fernandes</a></span><br>
+        
+        </li>
+        <li class="w3-padding-16">
+          <a href="https://www.linkedin.com/in/shrayansh-yadav-701657ab" target="_blank">
+            <img src="/static/Shrayansh.jpg" class="w3-left w3-circle w3-margin-right" style="width:40px"></a>
+            <span class="w3-xlarge"> <a href="https://www.linkedin.com/in/shrayansh-yadav-701657ab" target="_blank" style="text-decoration: none; color: black;">Shrayansh Yadav</a></span><br>
+        </li>
+        <li class="w3-padding-16">
+          <a href="https://www.linkedin.com/in/shivam-mishra-763629187/" target="_blank">
+            <img src="/static/shivam.jpeg" class="w3-left w3-circle w3-margin-right" style="width:40px"></a>
+            <span class="w3-xlarge"> <a href="https://www.linkedin.com/in/shivam-mishra-763629187/" target="_blank" style="text-decoration: none; color: black;">Shivam Mishra</a></span><br>
+        </li>
+        <li class="w3-padding-16">
+            <img src="/static/pooja.jpeg" class="w3-left w3-circle w3-margin-right" style="width:40px">
+            <span class="w3-xlarge">Pooja Rana</span><br>
+        </li>
+        <li class="w3-padding-16">
+          <a href="https://www.linkedin.com/in/rifath-unnisa-815105202" target="_blank">
+            <img src="/static/Rifath.PNG" class="w3-left w3-circle w3-margin-right" style="width:40px"></a>
+            <span class="w3-xlarge"> <a href="https://www.linkedin.com/in/rifath-unnisa-815105202" target="_blank" style="text-decoration: none; color: black;">Rifath Unnisa</a></span><br>
+        </li>
+      </ul>
+    </div>
+    <hr>
+
+
+    <!-- Footer -->
+    <footer class="w3-container w3-padding-16 w3-light-grey">
+      <h4>Hope you enjoyed using this site!</h4>
+      <a href="/About" style=" color: black;">About</a></p>
+    </footer>
+
+    <!-- End page content -->
+  </div>
+
+  <script>
+    // Get the Sidebar
+    var mySidebar = document.getElementById("mySidebar");
+
+    // Get the DIV with overlay effect
+    var overlayBg = document.getElementById("myOverlay");
+
+    // Toggle between showing and hiding the sidebar, and add overlay effect
+    function w3_open() {
+      if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none';
+        overlayBg.style.display = "none";
+      } else {
+        mySidebar.style.display = 'block';
+        overlayBg.style.display = "block";
+      }
+    }
+
+    // Close the sidebar with the close button
+    function w3_close() {
+      mySidebar.style.display = "none";
+      overlayBg.style.display = "none";
+    }
+  </script>
+
+</body>
+
+</html>
