@@ -178,14 +178,14 @@ def get_worldmap():
         })
         # Changing the directory to static
         cwd = os.getcwd()
-        cwd_list = cwd.split("\\")
+        cwd_list = cwd.split("/")
         if cwd_list[-1] == "static":
                 cwd_list.pop()
                 cwd = '\\'.join(cwd_list)
-                static_dir = cwd + "\static"
+                static_dir = cwd + "/static"
                 os.chdir(static_dir)
         else:
-                static_dir = cwd + "\static"
+                static_dir = cwd + "/static"
                 os.chdir(static_dir)
 
         # save into the file
